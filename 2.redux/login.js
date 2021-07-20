@@ -4,7 +4,7 @@
 
 const { createStore, compose, applyMiddleware } = require('redux');
 const reducer = require('./reducers');
-const {login, logOut} = require('./actions/user');
+const {logIn, logOut} = require('./actions/user');
 const {addPost} = require('./actions/post');
 
 //4. reducer : action받아서 새로운 state로 대체해주는 것
@@ -40,18 +40,35 @@ const initialState = {
 // }
 const firstMiddleware = (store) => (next) => (action) => {
     // 기본기능 전후로 기능추가 가능
-    console.log('기능 추가1, 액션 실행'); // --> 기본기능 실행되기 전에 기능 추가됨
+    console.log('기능 추가1, 액션 실행', action); // --> 기본기능 실행되기 전에 기능 추가됨
     next(action);  // --> 기본기능, 얘만 있으면 미들웨어 없는 기본동작만 하는 샘(action을 dispatch하는거) 
     // 이 사이에 subscribe 동작
-    console.log('기능 추가2, 액션 끝'); // --> 기본기능 후에 기능추가할 때
+    console.log('기능 추가2, 액션 끝', action); // --> 기본기능 후에 기능추가할 때
 };
+
+const thunkMiddleware = (store) => (next) => (action) => {
+    if(typeof action == 'function'){ //비동기인 경우(원래 action은 객체지만 만약 비동기로 쓰겠다면 action을 함수로 넣어주겠다는 의미 내포)
+        return action(store.dispatch, store.getState);  // action함수를 두개의 인수를 넣어서 실행
+    }
+    return next(action); // return 쓰든 안쓰든 상관없음
+}
+// **thunk미들웨어 정리
+// action은 객체임, 즉 동기
+// 로그인, 로그아웃, 게시글 작성같이 서버를 거쳐야하는 비동기작업에서는 action를 함수에 넣어서 dispatch함
+// 그럼 thunk가 함수action을 실행함
+// 그럼 action파일에서 비동기action처리
+
 
 // const enhancer = compose(
 //     applyMiddleware(),
 //     devtoll, 리덕스 devtool연결하는 코드 여기에 적음
-// )   이거 밑처럼 해도됨
-const enhancer = applyMiddleware(firstMiddleware);
+// )  
 // -->  applyMiddleware말고 다른거(devtool같은) 붙힐 때 compose로 함수 합성해줌
+// 이거 밑처럼 해도됨
+const enhancer = applyMiddleware(
+    firstMiddleware,
+    thunkMiddleware,
+);
 
 // redux devtoll : action, dispatch, state들을 편하게 볼 수 있게 해주는 크롬 확장 플러그인
 
@@ -73,7 +90,7 @@ console.log('1st', store.getState());
 //선 밑부분은 화면에서 동작할때마다 react에서 실행
 
 //3. dispatch
-store.dispatch(login({
+store.dispatch(logIn({
     id: 1,
     name: 'phj',
     admin: true,
