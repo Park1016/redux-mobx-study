@@ -45,7 +45,13 @@ const reducer = (prevState, action) => {
 // 1.store
 const initialState = {
     user: null,
+    isLoggedIn: true,
     posts: [],
+    comments: [],
+    favorites: [],
+    history: [],
+    likes: [],
+    follower: [],
 };
 
 
