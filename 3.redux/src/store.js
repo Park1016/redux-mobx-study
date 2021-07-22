@@ -14,7 +14,7 @@ const {addPost} = require('./actions/post');
 // 1.store
 const initialState = {
     user: {
-        isLoggedIn: true,
+        isLoggedIn: false,
         data: null,
     },
     posts: [],
@@ -74,50 +74,54 @@ const enhancer = applyMiddleware(
 
 
 const store = createStore(reducer, initialState, enhancer);
-store.subscribe(() => {
-    console.log('changed'); //화면 바꿔주는 코드 여기서
-});
-
-console.log('1st', store.getState());
 
 
+module.exports = store;
 
-//2. action
-// action.js파일
+// store.subscribe(() => {
+//     console.log('changed'); //화면 바꿔주는 코드 여기서
+// });
 
-//선 윗부분은 미리 만들어놔야함(reducer, state, action)
-//----------------------------------------------
-//선 밑부분은 화면에서 동작할때마다 react에서 실행
-
-//3. dispatch
-store.dispatch(logIn({
-    id: 1,
-    name: 'phj',
-    admin: true,
-}));
-console.log('2nd', store.getState());
-
-store.dispatch(addPost({
-    userId: 1,
-    id: 1,
-    content: 'hello',
-}));
-store.dispatch(addPost({
-    userId: 1,
-    id: 2,
-    content: '두번째 hello',
-}));
-console.log('3nd', store.getState());
-
-store.dispatch(logOut());
-console.log('4nd', store.getState());
+// // console.log('1st', store.getState());
 
 
-//action은 기본적으로 동기, 객체
 
-//action과 dispatch사이에 비동기를 넣기위해 미들웨어(thunk, saga 등) 필요
+// //2. action
+// // action.js파일
 
-//굳이 비동기처리 때문이 아니더라도
-//미들웨어는 aciton과 dispatch사이에서 어떠한 동작이든 할 수 있게 해주기 위해 사용
+// //선 윗부분은 미리 만들어놔야함(reducer, state, action)
+// //----------------------------------------------
+// //선 밑부분은 화면에서 동작할때마다 react에서 실행
 
-// 미들웨어의 핵심! 어디서 동작하는가? --> action과 dispatch사이
+// //3. dispatch
+// store.dispatch(logIn({
+//     id: 1,
+//     name: 'phj',
+//     admin: true,
+// }));
+// // console.log('2nd', store.getState());
+
+// store.dispatch(addPost({
+//     userId: 1,
+//     id: 1,
+//     content: 'hello',
+// }));
+// store.dispatch(addPost({
+//     userId: 1,
+//     id: 2,
+//     content: '두번째 hello',
+// }));
+// // console.log('3nd', store.getState());
+
+// store.dispatch(logOut());
+// // console.log('4nd', store.getState());
+
+
+// //action은 기본적으로 동기, 객체
+
+// //action과 dispatch사이에 비동기를 넣기위해 미들웨어(thunk, saga 등) 필요
+
+// //굳이 비동기처리 때문이 아니더라도
+// //미들웨어는 aciton과 dispatch사이에서 어떠한 동작이든 할 수 있게 해주기 위해 사용
+
+// // 미들웨어의 핵심! 어디서 동작하는가? --> action과 dispatch사이
