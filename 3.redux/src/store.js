@@ -6,6 +6,7 @@ const { createStore, compose, applyMiddleware } = require('redux');
 const reducer = require('./reducers');
 const {logIn, logOut} = require('./actions/user');
 const {addPost} = require('./actions/post');
+const {composeWithDevTools} = require('redux-devtools-extension');
 
 //4. reducer : action받아서 새로운 state로 대체해주는 것
 // reducer.js파일
@@ -65,10 +66,19 @@ const thunkMiddleware = (store) => (next) => (action) => {
 // )  
 // -->  applyMiddleware말고 다른거(devtool같은) 붙힐 때 compose로 함수 합성해줌
 // 이거 밑처럼 해도됨
-const enhancer = applyMiddleware(
-    firstMiddleware,
-    thunkMiddleware,
-);
+const enhancer = process.env.NODE_ENV === 'production' 
+    ? compose(     // 배포할 때
+        applyMiddleware(
+            firstMiddleware,
+            thunkMiddleware,
+        ),
+    )
+    : composeWithDevTools(   //개발환경일 때
+        applyMiddleware(
+            firstMiddleware,
+            thunkMiddleware,
+        ),
+    );
 
 // redux devtoll : action, dispatch, state들을 편하게 볼 수 있게 해주는 크롬 확장 플러그인
 
